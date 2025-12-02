@@ -1,4 +1,4 @@
-use std::ops::{Deref};
+use std::ops::Deref;
 
 pub struct Rotations(Vec<Rotation>);
 
