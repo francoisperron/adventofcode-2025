@@ -1,28 +1,46 @@
-mod rotations;
+use dial::Dial;
+use rotations::Rotations;
+
 mod dial;
+mod rotations;
+
+fn part1(input: &str) -> usize {
+    let rotations = Rotations::from(input);
+
+    Dial::new(50).turn_all(&rotations).filter(|dial| dial.position == 0).count()
+}
+
+fn part2(input: &str) -> usize {
+    let rotations = Rotations::from(input);
+
+    Dial::new(50).turn_all(&rotations).map(|dial| dial.zero_position_count).sum()
+}
 
 #[cfg(test)]
 mod tests {
-    use crate::day01::dial::Dial;
-    use crate::day01::rotations::Rotations;
+    use crate::day01::{part1, part2};
     use crate::toolbox::daily::daily_input;
 
     #[test]
     fn solves_part1_example() {
-        let rotations = Rotations::from(EXAMPLE);
-        assert_eq!(rotations.rotations, vec![-68, -30, 48, -5, 60, -55, -1, -99, 14, -82]);
-
-        let dial = Dial::new(rotations);
-        assert_eq!(dial.password(), 3)
+        assert_eq!(part1(EXAMPLE), 3)
     }
 
     #[test]
     fn solves_part1() {
         let input = daily_input(1);
-        let rotations = Rotations::from(&input);
-        let dial = Dial::new(rotations);
+        assert_eq!(part1(&input), 1018)
+    }
 
-        assert_eq!(dial.password(), 1018)
+    #[test]
+    fn solves_part2_example() {
+        assert_eq!(part2(EXAMPLE), 6)
+    }
+
+    #[test]
+    fn solves_part2() {
+        let input = daily_input(1);
+        assert_eq!(part2(&input), 5815)
     }
 
     const EXAMPLE: &str = "\
