@@ -16,12 +16,6 @@ impl Deref for IdsRanges {
     }
 }
 
-impl IdsRanges {
-    pub fn sum_of_invalids(&self) -> usize {
-        self.iter().map(|range| range.invalid_ids().sum::<usize>()).sum::<usize>()
-    }
-}
-
 pub struct IdsRange(RangeInclusive<usize>);
 
 impl From<&str> for IdsRange {
@@ -34,17 +28,45 @@ impl From<&str> for IdsRange {
 impl IdsRange {
     pub fn invalid_ids(&self) -> impl Iterator<Item = usize> + '_ {
         self.0.clone().filter(|&id| {
-            let id_string = id.to_string();
-            let digit_count = id_string.len();
+            let count = Self::count_digit(id);
 
-            if digit_count % 2 == 1 {
+            if count % 2 == 1 {
                 return false;
             }
 
-            let mid = digit_count / 2;
-            let (start, end) = id_string.split_at(mid);
-            start == end
+            let parts = Self::split_into_chunks(id, count / 2);
+            parts.iter().all(|&part| part == parts[0])
         })
+    }
+
+    pub fn invalid_ids_sequence(&self) -> impl Iterator<Item = usize> + '_ {
+        self.0.clone().filter(|&id| {
+            Self::divisors(id).any(|chunk_size| {
+                let parts = Self::split_into_chunks(id, chunk_size);
+                parts.iter().all(|&part| part == parts[0])
+            })
+        })
+    }
+
+    fn divisors(id: usize) -> impl Iterator<Item = u32> {
+        let count = Self::count_digit(id);
+        (1..count).filter(move |&d| count.is_multiple_of(d))
+    }
+
+    fn count_digit(id: usize) -> u32 {
+        id.checked_ilog10().unwrap_or(0) + 1
+    }
+
+    fn split_into_chunks(mut num: usize, chunk_size: u32) -> Vec<usize> {
+        let divisor = 10_usize.pow(chunk_size);
+        let mut chunks = Vec::new();
+
+        while num > 0 {
+            chunks.push(num % divisor);
+            num /= divisor;
+        }
+
+        chunks
     }
 }
 
@@ -72,5 +94,26 @@ mod tests {
         let range = IdsRange::from("1188511880-1188511890");
 
         assert_eq!(range.invalid_ids().collect::<Vec<usize>>(), vec![1188511885]);
+    }
+
+    #[test]
+    fn finds_invalid_ids_sequence_simple_range() {
+        let range = IdsRange::from("95-115");
+
+        assert_eq!(range.invalid_ids_sequence().collect::<Vec<usize>>(), vec![99, 111]);
+    }
+
+    #[test]
+    fn finds_invalid_ids_sequence_big_range() {
+        let range = IdsRange::from("2121212118-2121212124");
+
+        assert_eq!(range.invalid_ids_sequence().collect::<Vec<usize>>(), vec![2121212121]);
+    }
+
+    #[test]
+    fn finds_divisors_of_number_of_digit_in_id() {
+        let divisors = IdsRange::divisors(12345678);
+
+        assert_eq!(divisors.collect::<Vec<u32>>(), vec![1, 2, 4]);
     }
 }
