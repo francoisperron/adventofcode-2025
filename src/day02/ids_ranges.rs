@@ -26,7 +26,7 @@ impl From<&str> for IdsRange {
 }
 
 impl IdsRange {
-    pub fn invalid_ids(&self) -> impl Iterator<Item = usize> + '_ {
+    pub fn invalid_ids(&self) -> impl Iterator<Item = usize> {
         self.0.clone().filter(|&id| {
             let count = Self::count_digit(id);
 
@@ -39,7 +39,7 @@ impl IdsRange {
         })
     }
 
-    pub fn invalid_ids_sequence(&self) -> impl Iterator<Item = usize> + '_ {
+    pub fn invalid_ids_sequence(&self) -> impl Iterator<Item = usize> {
         self.0.clone().filter(|&id| {
             Self::divisors(id).any(|chunk_size| {
                 let parts = Self::split_into_chunks(id, chunk_size);

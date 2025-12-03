@@ -4,12 +4,12 @@ mod ids_ranges;
 
 fn part1(input: &str) -> usize {
     let ranges = IdsRanges::from(input);
-    ranges.iter().map(|range| range.invalid_ids().sum::<usize>()).sum::<usize>()
+    ranges.iter().map(|range| range.invalid_ids().sum::<usize>()).sum()
 }
 
 fn part2(input: &str) -> usize {
     let ranges = IdsRanges::from(input);
-    ranges.iter().map(|range| range.invalid_ids_sequence().sum::<usize>()).sum::<usize>()
+    ranges.iter().map(|range| range.invalid_ids_sequence().sum::<usize>()).sum()
 }
 
 #[cfg(test)]
