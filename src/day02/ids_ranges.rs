@@ -1,6 +1,7 @@
-use std::ops::{Deref, RangeInclusive};
+use std::ops::{Deref, DerefMut, RangeInclusive};
 
-pub struct IdsRanges(Vec<IdsRange>);
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct IdsRanges(pub(crate) Vec<IdsRange>);
 
 impl From<&str> for IdsRanges {
     fn from(input: &str) -> Self {
@@ -16,7 +17,14 @@ impl Deref for IdsRanges {
     }
 }
 
-pub struct IdsRange(RangeInclusive<usize>);
+impl DerefMut for IdsRanges {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
+    }
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct IdsRange(pub(crate) RangeInclusive<usize>);
 
 impl From<&str> for IdsRange {
     fn from(input: &str) -> Self {

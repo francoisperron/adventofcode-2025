@@ -1,6 +1,5 @@
-use crate::day02::ids_ranges::IdsRanges;
-
 mod ids_ranges;
+pub use ids_ranges::{IdsRange, IdsRanges};
 
 fn part1(input: &str) -> usize {
     let ranges = IdsRanges::from(input);
