@@ -34,7 +34,7 @@ fn solve(input: &str) -> (usize, usize) {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::toolbox::daily::daily_input;
+    use crate::toolbox::daily::DailyInput;
 
     #[test]
     fn solves_part1_example() {
@@ -43,7 +43,7 @@ mod tests {
 
     #[test]
     fn solves_part1() {
-        let input = daily_input(7);
+        let input = DailyInput::get(7);
         assert_eq!(solve(&input).0, 1602)
     }
 
@@ -54,7 +54,7 @@ mod tests {
 
     #[test]
     fn solves_part2() {
-        let input = daily_input(7);
+        let input = DailyInput::get(7);
         assert_eq!(solve(&input).1, 135656430050438)
     }
 

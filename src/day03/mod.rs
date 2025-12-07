@@ -15,7 +15,7 @@ fn part2(input: &str) -> usize {
 #[cfg(test)]
 mod tests {
     use crate::day03::{part1, part2};
-    use crate::toolbox::daily::daily_input;
+    use crate::toolbox::daily::DailyInput;
 
     #[test]
     fn solves_part1_example() {
@@ -24,7 +24,7 @@ mod tests {
 
     #[test]
     fn solves_part1() {
-        let input = daily_input(3);
+        let input = DailyInput::get(3);
         assert_eq!(part1(&input), 17087);
     }
 
@@ -35,7 +35,7 @@ mod tests {
 
     #[test]
     fn solves_part2() {
-        let input = daily_input(3);
+        let input = DailyInput::get(3);
         assert_eq!(part2(&input), 169019504359949);
     }
 
