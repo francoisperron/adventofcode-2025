@@ -21,12 +21,13 @@ fn part2(input: &str) -> usize {
     let columns = (0..max_column_index)
         .rev()
         .map(|column| lines.iter().map(|line| line.chars().nth(column).unwrap_or(' ')).join(""))
+        .filter(|c| !c.trim().is_empty())
         .collect::<Vec<_>>();
 
     let mut total = 0;
     let mut numbers = vec![];
 
-    for column in columns.iter().filter(|c| !c.trim().is_empty()) {
+    for column in columns.iter() {
         let number = column.replace(['+', '*'], "").trim().parse::<usize>().unwrap();
         numbers.push(number);
 
