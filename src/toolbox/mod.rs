@@ -4,7 +4,7 @@ mod position;
 // pub use position::Position;
 
 mod direction;
-// pub use direction::Direction;
+pub use direction::Direction;
 
 mod grid;
 pub use grid::Grid;
