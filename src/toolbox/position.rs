@@ -53,6 +53,16 @@ impl Position {
     pub fn manhattan_distance(&self, other: &Position) -> usize {
         (self.x - other.x).unsigned_abs() + (self.y - other.y).unsigned_abs()
     }
+
+    pub fn area(&self, other: &Position) -> usize {
+        let max_x = self.x.max(other.x);
+        let min_x = self.x.min(other.x);
+
+        let max_y = self.y.max(other.y);
+        let min_y = self.y.min(other.y);
+
+        (max_x - min_x + 1).unsigned_abs() * (max_y - min_y + 1).unsigned_abs()
+    }
 }
 
 impl Add for Position {
@@ -194,5 +204,13 @@ mod tests {
 
         assert_eq!(p1.manhattan_distance(&p2), 11);
         assert_eq!(p2.manhattan_distance(&p1), 11);
+    }
+
+    #[test]
+    fn calculates_area() {
+        let p1 = Position::new(2, 5);
+        let p2 = Position::new(11, 1);
+
+        assert_eq!(p1.area(&p2), 50);
     }
 }

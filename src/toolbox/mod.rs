@@ -1,7 +1,7 @@
 pub mod daily;
 
 mod position;
-// pub use position::Position;
+pub use position::Position;
 
 mod direction;
 pub use direction::Direction;
