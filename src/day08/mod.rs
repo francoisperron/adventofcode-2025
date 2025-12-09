@@ -5,7 +5,7 @@ use std::collections::HashSet;
 
 mod xzy;
 
-fn part1(input: &str, pairs_count: usize) -> usize {
+fn solve(input: &str, pairs_count: usize) -> (usize, usize) {
     let boxes = input.lines().map(Xyz::from).collect::<Vec<_>>();
 
     let distances = boxes
@@ -16,6 +16,7 @@ fn part1(input: &str, pairs_count: usize) -> usize {
         .collect::<Vec<_>>();
 
     let mut circuits: Vec<HashSet<Xyz>> = boxes.iter().map(|b| HashSet::from([*b])).collect();
+    let mut all_connected = 0;
 
     for distance in distances.iter().take(pairs_count) {
         let (a, b, _) = distance;
@@ -29,12 +30,18 @@ fn part1(input: &str, pairs_count: usize) -> usize {
 
         let b_circuit = circuits.remove(b_idx);
         let a_idx = if b_idx < a_idx { a_idx - 1 } else { a_idx };
-
         circuits[a_idx].extend(b_circuit);
+
+        if circuits.len() == 1 {
+            all_connected = (a.x * b.x) as usize;
+            break;
+        }
     }
 
     circuits.sort_by_key(|circuit| Reverse(circuit.len()));
-    circuits[0].len() * circuits[1].len() * circuits[2].len()
+    let three_circuits = if circuits.len() > 1 { circuits[0].len() * circuits[1].len() * circuits[2].len() } else { 0 };
+
+    (three_circuits, all_connected)
 }
 
 #[cfg(test)]
@@ -44,13 +51,24 @@ mod tests {
 
     #[test]
     fn solves_part1_example() {
-        assert_eq!(part1(EXAMPLE, 10), 40);
+        assert_eq!(solve(EXAMPLE, 10).0, 40);
     }
 
     #[test]
     fn solves_part1() {
         let input = DailyInput::get(8);
-        assert_eq!(part1(&input, 1000), 29406);
+        assert_eq!(solve(&input, 1000).0, 29406);
+    }
+
+    #[test]
+    fn solves_part2_example() {
+        assert_eq!(solve(EXAMPLE, usize::MAX).1, 25272);
+    }
+
+    #[test]
+    fn solves_part2() {
+        let input = DailyInput::get(8);
+        assert_eq!(solve(&input, usize::MAX).1, 7499461416);
     }
 
     const EXAMPLE: &str = "162,817,812
