@@ -18,7 +18,7 @@ impl Surface {
             .iter()
             .tuple_combinations()
             .map(|(a, b)| Surface::new(*a, *b, a.area(b)))
-            .sorted_by(|a, b| b.area.partial_cmp(&a.area).unwrap())
+            .sorted_by(|a, b| b.area.cmp(&a.area))
             .collect::<Vec<_>>()
     }
 
