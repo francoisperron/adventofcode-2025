@@ -4,12 +4,13 @@ use itertools::Itertools;
 pub struct Machine {
     pub lights: usize,
     pub buttons: Vec<usize>,
+    pub joltage: Vec<usize>,
 }
 
 impl From<&str> for Machine {
     fn from(input: &str) -> Self {
         let parts: Vec<_> = input.split_whitespace().collect();
-        let [first, middle @ .., _last] = parts.as_slice() else { unreachable!() };
+        let [first, middle @ .., last] = parts.as_slice() else { unreachable!() };
 
         let lights = first
             .trim_matches(['[', ']'])
@@ -27,7 +28,13 @@ impl From<&str> for Machine {
             })
             .collect::<Vec<_>>();
 
-        Self { lights, buttons }
+        let joltage = last
+            .trim_matches(['{', '}'])
+            .split(',')
+            .map(|n| n.parse::<usize>().unwrap())
+            .collect::<Vec<_>>();
+
+        Self { lights, buttons, joltage }
     }
 }
 
@@ -58,6 +65,11 @@ mod tests {
     #[test]
     fn parses_buttons_to_int() {
         assert_eq!(Machine::from("[....] (0) (0,1,2,3) {3,5,4,7}").buttons, vec![1, 15]);
+    }
+
+    #[test]
+    fn parses_joltage() {
+        assert_eq!(Machine::from("[....] (0) (0,1,2,3) {3,5,4,7}").joltage, vec![3, 5, 4, 7]);
     }
 
     #[test]
