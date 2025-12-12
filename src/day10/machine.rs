@@ -28,11 +28,7 @@ impl From<&str> for Machine {
             })
             .collect::<Vec<_>>();
 
-        let joltage = last
-            .trim_matches(['{', '}'])
-            .split(',')
-            .map(|n| n.parse::<usize>().unwrap())
-            .collect::<Vec<_>>();
+        let joltage = last.trim_matches(['{', '}']).split(',').map(|n| n.parse::<usize>().unwrap()).collect::<Vec<_>>();
 
         Self { lights, buttons, joltage }
     }
