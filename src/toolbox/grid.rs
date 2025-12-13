@@ -1,6 +1,8 @@
+use crate::toolbox::Direction;
 use crate::toolbox::position::Position;
 use std::collections::{HashMap, HashSet};
 
+#[derive(Debug, PartialEq)]
 pub struct Grid {
     pub elements: HashMap<Position, char>,
     pub max_x: isize,
@@ -68,10 +70,35 @@ impl Grid {
             .collect::<Vec<_>>()
             .join("\n")
     }
+
+    pub fn rotate(&self) -> Grid {
+        let mut rotated = Grid::new(self.max_y, self.max_x);
+
+        for (&positions, &value) in self.elements.iter() {
+            let x = self.max_y - 1 - positions.y;
+            let y = positions.x;
+            rotated.set_element_at(&Position::new(x, y), value);
+        }
+
+        rotated
+    }
+
+    pub fn flip(&self, direction: Direction) -> Grid {
+        let mut flipped = Grid::new(self.max_x, self.max_y);
+
+        for (&positions, &value) in self.elements.iter() {
+            let x = if direction == Direction::Up || direction == Direction::Down { positions.x } else { self.max_x - 1 - positions.x };
+            let y = if direction == Direction::Left || direction == Direction::Right { positions.y } else { self.max_y - 1 - positions.y };
+            flipped.set_element_at(&Position::new(x, y), value);
+        }
+
+        flipped
+    }
 }
 
 #[cfg(test)]
 mod tests {
+    use crate::toolbox::Direction;
     use crate::toolbox::grid::Grid;
     use crate::toolbox::position::Position;
     use std::collections::{HashMap, HashSet};
@@ -133,5 +160,35 @@ mod tests {
 
         assert_eq!(grid.element_at(&Position::new(0, 0)), &'b');
         assert_eq!(grid.element_at(&Position::new(1, 0)), &'a');
+    }
+
+    #[test]
+    fn rotates_clockwise() {
+        let grid = Grid::from("1234\n5678");
+        let rotated = grid.rotate();
+
+        assert_eq!(rotated, Grid::from("51\n62\n73\n84"));
+    }
+
+    #[test]
+    fn flips_up_down() {
+        let grid = Grid::from("12\n34\n56");
+
+        let flipped_up = grid.flip(Direction::Up);
+        assert_eq!(flipped_up, Grid::from("56\n34\n12"));
+
+        let flipped_down = grid.flip(Direction::Down);
+        assert_eq!(flipped_down, Grid::from("56\n34\n12"));
+    }
+
+    #[test]
+    fn flips_right_or_left() {
+        let grid = Grid::from("123\n456");
+
+        let flipped_up = grid.flip(Direction::Left);
+        assert_eq!(flipped_up, Grid::from("321\n654"));
+
+        let flipped_down = grid.flip(Direction::Right);
+        assert_eq!(flipped_down, Grid::from("321\n654"));
     }
 }
