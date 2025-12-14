@@ -11,18 +11,23 @@ fn part1(input: &str) -> usize {
     let shapes = Shapes::from(begin);
     let regions = Regions::from(last);
 
-    let count = regions.iter().filter(|region| region.fit(&shapes)).count();
-    println!("{:?}", count);
-    2
+    regions.iter().filter(|region| region.fit(&shapes)).count()
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::toolbox::daily::DailyInput;
 
     #[test]
     fn solves_part1_example() {
-        assert_eq!(part1(EXAMPLE), 2)
+        assert_eq!(part1(EXAMPLE), 3)
+    }
+
+    #[test]
+    fn solves_part1() {
+        let input = DailyInput::get(12);
+        assert_eq!(part1(&input), 497)
     }
 
     const EXAMPLE: &str = "0:

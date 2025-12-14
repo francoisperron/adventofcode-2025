@@ -27,14 +27,18 @@ pub struct Region {
 }
 
 impl Region {
-    pub fn fit(&self, _shapes: &[Grid]) -> bool {
-        true
+    pub fn fit(&self, shapes: &[Grid]) -> bool {
+        let region_space = (self.grid.max_x * self.grid.max_y) as usize;
+        let shapes_space: usize = shapes.iter().enumerate().map(|(i, shape)| shape.positions_of('#').count() * self.shapes[i]).sum();
+
+        region_space > shapes_space
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::day12::shapes::Shapes;
 
     #[test]
     fn parses_region() {
@@ -44,5 +48,21 @@ mod tests {
         assert_eq!(regions[0].grid.max_x, 12);
         assert_eq!(regions[0].grid.max_y, 5);
         assert_eq!(regions[0].shapes, vec![1, 0, 1, 0, 2, 2]);
+    }
+
+    #[test]
+    fn fits_when_region_space_bigger_than_shapes_spaces() {
+        let shapes = Shapes::from(&["0:\n###\n..."]);
+        let regions = Regions::from("3x3: 1");
+
+        assert!(regions[0].fit(&shapes))
+    }
+
+    #[test]
+    fn does_not_fit_when_region_space_bigger_is_equal_or_less_then_shapes_spaces() {
+        let shapes = Shapes::from(&["0:\n###\n..."]);
+        let regions = Regions::from("3x3: 3");
+
+        assert!(!regions[0].fit(&shapes))
     }
 }
