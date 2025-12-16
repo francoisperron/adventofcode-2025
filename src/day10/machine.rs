@@ -1,10 +1,12 @@
+use crate::day10::buttons::Buttons;
+use crate::day10::joltages::Joltages;
 use itertools::Itertools;
 
 #[derive(Debug)]
 pub struct Machine {
     pub lights: usize,
     pub buttons: Vec<usize>,
-    pub joltage: Vec<usize>,
+    pub joltages: Vec<isize>,
 }
 
 impl From<&str> for Machine {
@@ -28,9 +30,9 @@ impl From<&str> for Machine {
             })
             .collect::<Vec<_>>();
 
-        let joltage = last.trim_matches(['{', '}']).split(',').map(|n| n.parse::<usize>().unwrap()).collect::<Vec<_>>();
+        let joltages = last.trim_matches(['{', '}']).split(',').map(|n| n.parse::<isize>().unwrap()).collect::<Vec<_>>();
 
-        Self { lights, buttons, joltage }
+        Self { lights, buttons, joltages }
     }
 }
 
@@ -45,6 +47,12 @@ impl Machine {
             })
             .min()
             .unwrap()
+    }
+
+    pub fn configure_joltage(&self) -> usize {
+        let buttons = Buttons::from(&self.buttons);
+        let joltages = Joltages::new(&self.joltages);
+        buttons.fewest_presses(&joltages).unwrap()
     }
 }
 
@@ -65,7 +73,7 @@ mod tests {
 
     #[test]
     fn parses_joltage() {
-        assert_eq!(Machine::from("[....] (0) (0,1,2,3) {3,5,4,7}").joltage, vec![3, 5, 4, 7]);
+        assert_eq!(Machine::from("[....] (0) (0,1,2,3) {3,5,4,7}").joltages, vec![3, 5, 4, 7]);
     }
 
     #[test]
